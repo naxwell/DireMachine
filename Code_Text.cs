@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Uniduino;
+using UnityEngine.SceneManagement;
 
 
 public class Code_Text : MonoBehaviour {
@@ -13,10 +14,12 @@ public class Code_Text : MonoBehaviour {
 		private bool firstTime = false;
 
 		public Arduino arduino;
+		private int pin = 9;
+		private int pin2 = 11;
 		//public Vector3 TriggerRotation;
 		//public float AngleGiveForMatching;
 		//private bool sameRotation;
-		private string currentNumber = "no";
+		private string currentNumber = "0";
 		private float rotationAngle;
 
 		void Start()
@@ -24,14 +27,15 @@ public class Code_Text : MonoBehaviour {
 			//Text sets your text to say this message
 			//codeEntry.text = "Enter Code to Escape";
 		remoteText.text = "8008";
-		StartCoroutine (duino ());
+		//StartCoroutine (duino ());
 		arduino = Arduino.global;
 		arduino.Setup (ConfigurePins);
 
 		}
 
 	void ConfigurePins(){
-		arduino.pinMode (9, PinMode.OUTPUT);
+		arduino.pinMode (9, PinMode.SERVO);
+		arduino.pinMode (11, PinMode.SERVO);
 	}
 
 
@@ -53,7 +57,7 @@ public class Code_Text : MonoBehaviour {
 			currentNumber = "1";
 		}
 		//Gabby
-		if (rotationAngle > 320 && rotationAngle < 350) {
+		if (rotationAngle > 320 && rotationAngle < 360) {
 			currentNumber = "3";
 		}
 		//Couple
@@ -61,7 +65,7 @@ public class Code_Text : MonoBehaviour {
 			currentNumber = "5";
 		}
 		//Preacher
-		if (rotationAngle > 20 && rotationAngle < 50) {
+		if (rotationAngle > 0 && rotationAngle < 50) {
 			currentNumber = "2";
 		}
 
@@ -69,7 +73,7 @@ public class Code_Text : MonoBehaviour {
 
 		if (OVRInput.GetDown (OVRInput.Button.One) && firstTime == false) {
 			//codeEntry.text = codeEntry.text + currentNumber;
-			remoteText.text = currentNumber;
+			remoteText.text = "";
 			firstTime = true;
 		}
 
@@ -83,16 +87,23 @@ public class Code_Text : MonoBehaviour {
 			firstTime = false;
 		}
 
+		if (remoteText.text == "3223") {
+			StartCoroutine (win ());
+		}
+
 	
 	}
 		
-	IEnumerator duino(){
-		while (remoteText.text == "5555") {
-			arduino.digitalWrite (9, Arduino.HIGH); // led ON
-			yield return new WaitForSeconds (1);
-			arduino.digitalWrite (9, Arduino.LOW); // led OFF
-			yield return new WaitForSeconds (1);
-		}
+	IEnumerator win(){
+		arduino.analogWrite (pin, 20);
+		arduino.analogWrite (pin2, 160);
+		remoteText.text = "GOOD";
+		yield return new WaitForSeconds (1);
+		remoteText.text = "DAY";
+		yield return new WaitForSeconds (2);
+		SceneManager.LoadScene (0);
+		
+
 	}
 	}
 	

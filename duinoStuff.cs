@@ -6,7 +6,9 @@ using Uniduino;
 public class duinoStuff : MonoBehaviour {
 
 	public Arduino arduino;
-	TextMesh remote;
+	public int pin = 9;
+	public int pin2 = 11;
+	//TextMesh remote;
 
 	// Use this for initialization
 	void Start () {
@@ -14,25 +16,29 @@ public class duinoStuff : MonoBehaviour {
 		arduino = Arduino.global;
 		arduino.Setup (ConfigurePins);
 
-		remote = GameObject.Find("RemoteNumbers").GetComponent<TextMesh>();
+	//	remote = GameObject.Find("RemoteNumbers").GetComponent<TextMesh>();
+		//StartCoroutine (BlinkLoop ());
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (remote.text == "5555") {
-			StartCoroutine (BlinkLoop ());
-		}
+		//if (remote.text == "5555") {
+		//	StartCoroutine (BlinkLoop ());
+		//}
 	}
 	void ConfigurePins(){
-		arduino.pinMode (9, PinMode.OUTPUT);
+		arduino.pinMode (9, PinMode.SERVO);
+		arduino.pinMode (11, PinMode.SERVO);
 	}
 
 	IEnumerator BlinkLoop() {
 		while(true) {   
-			arduino.digitalWrite(9, Arduino.HIGH); // led ON
+			arduino.analogWrite(pin,105);
+			arduino.analogWrite(pin2, 75);
 			yield return new WaitForSeconds(1);
-			arduino.digitalWrite(9, Arduino.LOW); // led OFF
-			yield return new WaitForSeconds(1);
+			//arduino.analogWrite(pin, 45);
+			//arduino.analogWrite(pin2,135);
+			//yield return new WaitForSeconds(1);
 		}           
 	}
 }
